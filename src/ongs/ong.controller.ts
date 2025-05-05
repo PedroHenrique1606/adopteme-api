@@ -6,11 +6,14 @@ import {
   UseInterceptors,
   BadRequestException,
   Get,
+  Put,
+  Param,
+  Delete,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Express } from 'express';
 import { OngService } from './ong.service';
 import { CreateOngDto } from './dto/create-ong.dto';
@@ -81,5 +84,23 @@ export class OngController {
       ...ong,
       logo_url: `${process.env.BASE_URL || 'http://localhost:8080'}/uploads/${ong.logo}`,
     }));
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Atualizar dados da ONG' })
+  @ApiParam({ name: 'id', type: 'string', description: 'ID da ONG' })
+  async update(
+    @Param('id') id: string,
+    @Body() body: Partial<CreateOngDto>,
+  ) {
+    return this.ongService.update(id, body);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Deletar ONG' })
+  @ApiParam({ name: 'id', type: 'string', description: 'ID da ONG' })
+  async delete(@Param('id') id: string) {
+    await this.ongService.delete(id)
+    return { message: 'ONG deletada com sucesso' }
   }
 }

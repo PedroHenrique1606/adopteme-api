@@ -48,4 +48,16 @@ export class OngService {
   async findAll(): Promise<OngEntity[]> {
     return this.ongRepository.find();
   }
+
+  async update(id: string, data: Partial<CreateOngDto>): Promise<OngEntity> {
+    const ong = await this.findById(id)
+    Object.assign(ong, data);
+
+    return this.ongRepository.save(ong);
+  }
+
+  async delete(id: string): Promise<void> {
+    const ong = await this.findById(id);
+    await this.ongRepository.remove(ong);
+  }
 }
